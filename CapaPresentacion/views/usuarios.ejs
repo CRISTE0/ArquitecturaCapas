@@ -1,0 +1,123 @@
+<%- include('template/cabecera', { tituloweb: 'Página de Usuarios' }) %>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CRUD MONGO DB - Usuarios</title>
+<style>
+  .container {
+    max-width: 960px;
+  }
+</style>
+</head>
+<div class="container">
+  <h1 class="text-primary">Usuarios</h1>
+
+ <!-- Modal para Registrar usuario -->
+<button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+  Registrar Usuario
+</button>
+
+<div id="modalUsuario" class="modal fade" tabindex="-1" aria-labelledby="modalUsuario" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formCrearUsuario" action="/crearUsuario" method="post">
+          <input id="id_usuario" name="id_usuario" type="text" hidden>
+          <div class="mb-3">
+            <label for="nombre_editar" class="col-form-label">Nombre:</label>
+            <input id="nombre_editar" name="username" type="text" class="form-control" placeholder="Ingrese el nombre">
+          </div>
+          <div class="mb-3">
+            <label for="correo_editar" class="col-form-label">Correo:</label>
+            <input id="correo_editar" name="email" type="email" class="form-control" placeholder="Ingrese correo">
+          </div>
+          <div class="mb-3">
+            <label for="Contraseña_editar" class="col-form-label">Contraseña:</label>
+            <input id="Contraseña_editar" name="password" type="password" placeholder="Ingrese contraseña" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">Registrar</button>
+        </form>
+        <% if(typeof validaciones != 'undefined') { %>
+          <% validaciones.forEach( (validacion)  => { %>
+            <div class="toast-container">
+              <div class="toast" role="alert" aria-live="assertive" data-bs-autohide="false">
+                <div class="toast-header">
+                  <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%"
+                    height="100%" fill="#007aff"></rect></svg>
+                    <strong class="me-auto">!Atencion!</strong>
+                    <button type="button" class="btn-close" data-bsdismiss="toast"
+                  aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                  <strong><%= validacion.msg%></strong>
+                </div>
+              </div>
+            </div>
+            <% })%>
+            <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Tabla de usuarios -->
+  <table id="tablaUsuarios" class="table mt-4">
+    <thead>
+      <tr>
+        <th style="display: none;">ID</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Contraseña</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% usuarios.forEach((usuario) => { %>
+        <tr>
+          <td style="display: none;"><%= usuario._id %></td>
+          <td><%= usuario.username %></td>
+          <td><%= usuario.email %></td>
+          <td><%= usuario.password %></td>
+          <td class="d-flex">
+            <a type="button" class="btnEditar btn btn-outline-primary bi bi-pencil"></a>
+            <a href="/borrarUsuario/<%= usuario._id %>" class="btn btn-outline-danger bi bi-trash"></a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div id="modalUsuarioEditar" class="modal fade" tabindex="-1" aria-labelledby="modalAlumno" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="exampleModalLabel">Editar Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/editarUsuario" method="post">
+          <input name="id_editar" id="id_editar" type="text" hidden>
+          <div class="mb-3">
+            <label for="usuario_editar" class="col-form-label">Nombre:</label>
+            <input id="usuario_editar" name="usuario_editar" type="text" class="form-control" value="">
+          </div>
+          <div class="mb-3">
+            <label for="email_editar" class="col-form-label">Edad:</label>
+            <input id="email_editar" name="email_editar" type="email" class="form-control" value="">
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('template/footer') %>

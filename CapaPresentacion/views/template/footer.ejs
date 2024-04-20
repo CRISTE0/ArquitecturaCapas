@@ -1,0 +1,25 @@
+<body>
+    <script src="/js/bootstrap.bundle.min.js "></script>
+    <script src="/js/bootstrap.min.js "></script>
+    <script src="/js/navbar.js "></script>
+    <script src="/js/modalCliente.js"></script>
+    <script src="/js/modalUsuario.js"></script>
+    <script src="/js/modalCompras.js"></script>
+    <script src="/js/modalProveedores.js"></script>
+    <script src="/js/modalVenta.js"></script>
+    <script src="/js/modalProducto.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            var toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl)
+            });
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+
+</body>
+
+</html>

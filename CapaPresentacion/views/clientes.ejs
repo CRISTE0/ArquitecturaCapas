@@ -1,0 +1,195 @@
+<!-- views/clientes.ejs -->
+<%- include('template/cabecera', { tituloweb: 'Página de Clientes' }) %>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CRUD MONGO DB - Clientes</title>
+
+</head>
+<div class="container">
+  <h1 class="text-primary">Clientes</h1>
+  <!-- Modal para agregar nuevo cliente -->
+  <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalCliente">
+    Registrar Cliente
+  </button>
+  
+  <div id="modalCliente" class="modal fade" tabindex="-1" aria-labelledby="modalCliente" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Registrar Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formCrearCliente" action="/crearCliente" method="post">
+            <input id="id_cliente" name="id_cliente" type="text" hidden>
+
+              <div class="mb-3">
+                <label for="tipo_documento" class="col-form-label">Tipo de documento:</label>
+                <select id="tipo_documento" name="tipo_documento" class="form-control" required>
+                    <option value="" disabled selected>Seleccione el tipo de documento</option>
+                    <option value="Cedula Ciudadania">Cedula Ciudadania</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                    <option value="Permiso Protección Temporal">Permiso Protección Temporal</option>
+                    <!-- Agrega más opciones según sea necesario -->
+                </select>
+            </div>
+            <div class="mb-3">
+              <label for="nro_documento" class="col-form-label">Número de documento:</label>
+              <input id="nro_documento" name="nro_documento" type="text" class="form-control" placeholder="Ingrese el nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="nombre_editar" class="col-form-label">Nombre completo:</label>
+              <input id="nombre_editar" name="nombre" type="text" class="form-control" placeholder="Ingrese el nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="correo" class="col-form-label">Correo:</label>
+              <input id="correo" name="correo" type="text" class="form-control" placeholder="Ingrese el nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="direccion_editar" class="col-form-label">Dirección:</label>
+              <input id="direccion_editar" name="direccion" type="text" class="form-control" placeholder="Ingrese la dirección" required>
+            </div>
+            <div class="mb-3">
+              <label for="telefono" class="col-form-label">Telefono:</label>
+              <input id="telefono" name="telefono" type="text" class="form-control" placeholder="Ingrese la dirección" required>
+            </div>
+
+            
+
+
+              <input id="estado" name="estado" value="Activo" class="form-control" placeholder="Ingrese la dirección" hidden>
+            
+            <button type="submit" class="btn btn-primary">Registrar</button>
+          </form>
+          <% if(typeof validaciones != 'undefined') { %>
+            <% validaciones.forEach( (validacion)  => { %>
+              <div class="toast-container">
+                <div class="toast" role="alert" aria-live="assertive" data-bs-autohide="false">
+                  <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%"
+                      height="100%" fill="#007aff"></rect></svg>
+                      <strong class="me-auto">!Atencion!</strong>
+                      <button type="button" class="btn-close" data-bsdismiss="toast"
+                    aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body">
+                    <strong><%= validacion.msg%></strong>
+                  </div>
+                </div>
+              </div>
+              <% })%>
+              <% } %>
+        </div>
+      </div>
+    </div>
+  </div>   
+
+  <!-- Tabla de clientes -->
+  <table id="tablaClientes" class="table mt-4">
+    <thead>
+      <tr>
+        <th style="display: none;">ID</th>
+        <th>Tipo de documento</th>
+        <th>Número de documento</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% clientes.forEach((cliente) => { %>
+        <tr >
+          <td style="display: none;"><%= cliente._id %></td>
+          <td><%= cliente.tipoDocumento %></td>
+          <td><%= cliente.numeroDocumento %></td>
+          <td><%= cliente.nombre %></td>
+          <td><%= cliente.correo %></td>
+          <td><%= cliente.direccion %></td>
+          <td><%= cliente.telefono %></td>
+          <td id="<%= cliente.estado === 'Activo' ? 'activo' : 'inactivo' %>"><%= cliente.estado %></td>
+          <td class="d-flex">
+            <a type="button" class="btnEditarC btn btn-outline-primary bi bi-pencil"></a>
+            <a href="/borrarCliente/<%= cliente._id %>" class="btn btn-outline-danger bi bi-trash"></a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+</div>
+
+<div id="modalClienteEditar" class="modal fade" tabindex="-1" aria-labelledby="modalCliente" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="exampleModalLabel">Editar Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/editarCliente" method="post">
+          <input name="id_editar" id="id_editar" type="text" hidden>
+
+          <!-- <div class="mb-3">
+            <label for="tipodocumentoC_editar" class="col-form-label">Tipo de documento:</label>
+            <input id="tipodocumentoC_editar" name="tipodocumentoC_editar" type="text" class="form-control" value="">
+          </div> -->
+
+          <div class="mb-3">
+            <label for="tipodocumentoC_editar" class="col-form-label">Tipo de documento:</label>
+            <select id="tipodocumentoC_editar" name="tipodocumentoC_editar" class="form-control" required>
+                <!-- <option value="tipodocumentoC_editar" disabled selected></option> -->
+                <option value="Cedula Ciudadania">Cedula Ciudadania</option>
+                <option value="Pasaporte">Pasaporte</option>
+                <option value="Permiso Protección Temporal">Permiso Protección Temporal</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="numerodocumentoC_editar" class="col-form-label">Número de documento:</label>
+            <input id="numerodocumentoC_editar" name="numerodocumentoC_editar" type="text" class="form-control" value="">
+          </div>
+
+          <div class="mb-3">
+            <label for="nombreC_editar" class="col-form-label">Nombre:</label>
+            <input id="nombreC_editar" name="nombreC_editar" type="text" class="form-control" value="">
+          </div>
+          <div class="mb-3">
+            <label for="correoC_editar" class="col-form-label">Correo:</label>
+            <input id="correoC_editar" name="correoC_editar" type="text" class="form-control" value="">
+          </div>
+          
+          <div class="mb-3">
+            <label for="direccionC_editar" class="col-form-label">Dirección:</label>
+            <input id="direccionC_editar" name="direccionC_editar" type="text" class="form-control" value="">
+          </div>
+          
+          <div class="mb-3">
+            <label for="telefonoC_editar" class="col-form-label">Telefono:</label>
+            <input id="telefonoC_editar" name="telefonoC_editar" type="text" class="form-control" value="">
+          </div>
+
+          <!-- <div class="mb-3">
+            <label for="estadoC_editar" class="col-form-label">Estado:</label>
+            <input id="estadoC_editar" name="estadoC_editar" type="text" class="form-control" value="" hidden>
+          </div> -->
+
+          <div class="mb-3">
+              <label for="estadoC_editar" class="col-form-label">Estado:</label>
+              <select id="estadoC_editar" name="estadoC_editar" class="form-control" required>
+                  <!-- <option value="" disabled selected>Seleccione el estado</option> -->
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+              </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div> 
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('template/footer') %>

@@ -1,0 +1,12 @@
+.container {
+  max-width: 1090px;
+}
+
+#activo {
+background-color: green !important;
+}
+
+#inactivo {
+background-color: red !important;
+}
+
